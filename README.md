@@ -231,17 +231,18 @@ verification, public HTTPS deployment. Do not treat this build as production-ver
 - Email verification, password reset, private repositories and write actions are absent.
 - Risk weights are documented assumptions, not calibrated probabilities.
 - Live GitHub import and live MCP/Kiro calls were not verified in this environment.
-- Playwright E2E was not run; screenshots cover the landing, dashboard and repository page only.
+- Playwright E2E was attempted but blocked by Chromium extraction; screenshots cover the landing,
+  dashboard and repository page only.
 - Video, public URL and Devpost submission are outside this build.
 
 ## Roadmap
 
-1. Verify Compose and PostgreSQL; add backup/restore drill to CI or a staging runbook.
+1. Add a backup/restore drill to CI or a staging runbook.
 2. Optional tree-sitter analyzers when wheels are available; richer Java/cross-file resolution.
 3. Shared rate-limit store and horizontally scalable workers.
 4. GitHub App/OAuth for private repositories with a security review.
 5. Calibrate risk weights and add trend analysis across snapshots.
-6. Playwright E2E and accessibility checks in CI.
+6. Resolve Playwright browser installation in CI, then run E2E and accessibility checks.
 7. Public demo deployment and a three-minute recording.
 
 ## Contributing

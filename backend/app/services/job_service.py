@@ -70,13 +70,16 @@ def execute_job(job_id: str) -> None:
         job.started_at = job.started_at or utcnow()
         job.attempts += 1
         session.commit()
+        logger.info("job %s started (%s)", job.id, job.job_type)
 
         def progress(percent: int, _message: str) -> None:
             job.progress = max(0, min(100, percent))
             session.commit()
 
         try:
+            logger.info("job %s dispatching", job.id)
             result = dispatch(session, job, progress)
+            logger.info("job %s dispatch completed", job.id)
             session.commit()
             jobs_repo.finish_job(session, job, result=result)
             session.commit()

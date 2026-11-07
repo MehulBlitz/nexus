@@ -80,6 +80,9 @@ investigations/reports.
 12. Configure `AI_PROVIDER=none` unless you have reviewed the privacy implications of sending code
     excerpts to a model provider.
 
+The Compose worker disables the inherited API HTTP healthcheck because the worker is a non-HTTP
+process; database and API readiness remain healthchecked.
+
 ## Database migrations
 
 ```bash
@@ -118,4 +121,4 @@ exercised on SQLite (upgrade → downgrade → upgrade) and in the Compose Postg
 | PostgreSQL | Migrations and readiness smoke-tested locally |
 | Public HTTPS deployment | Not performed |
 | Backup/restore drill | Not performed |
-| Dependency/container scans | Not performed; npm audit reports two moderate React Router findings |
+| Dependency/container scans | pip-audit clean for backend/MCP; npm audit reports two moderate React Router findings; Trivy/Gitleaks unavailable |

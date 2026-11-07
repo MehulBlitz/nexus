@@ -10,10 +10,16 @@ from app.models.job import Job
 def dispatch(session: Session, job: Job, progress) -> dict:
     payload = job.payload_json or {}
     if job.job_type == "index_repository":
+        import logging
+
+        logging.getLogger("nexus.dispatch").info("job %s loading repository", job.id)
         from app.services.indexing_service import index_repository
         from app.services.repository_service import repository_for_job
 
         repository = repository_for_job(session, job)
+        logging.getLogger("nexus.dispatch").info(
+            "job %s indexing %s", job.id, repository.full_name
+        )
         outcome = index_repository(session, repository, settings=_settings(), progress=progress)
         return {
             "snapshot_id": outcome.snapshot_id,

@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 from collections import Counter
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 
 from sqlalchemy.orm import Session
@@ -77,7 +77,9 @@ def index_repository(
     session.flush()
     try:
         report(5, "Fetching repository metadata")
+        logger.info("indexing %s: resolving branch %s", repository.full_name, repository.default_branch)
         branch_info = github.get_branch(ref, repository.default_branch)
+        logger.info("indexing %s: branch resolved", repository.full_name)
         commit_sha = (branch_info.get("commit") or {}).get("sha")
         if not commit_sha:
             raise UpstreamError("Could not resolve the latest commit for this branch")
@@ -91,7 +93,9 @@ def index_repository(
         session.flush()
 
         report(15, "Listing repository files")
+        logger.info("indexing %s: listing tree", repository.full_name)
         tree = github.get_tree(ref, commit_sha)
+        logger.info("indexing %s: tree listed (%s entries)", repository.full_name, tree.total_entries)
         selected, skipped, truncated = select_files(
             tree.files,
             max_files=settings.max_index_files,
@@ -118,11 +122,13 @@ def index_repository(
                 ): item
                 for item in selected
             }
-            for index, (future, item) in enumerate(futures.items(), start=1):
+            for index, future in enumerate(as_completed(futures), start=1):
+                item = futures[future]
                 try:
                     text = future.result()
-                except Exception:  # noqa: BLE001 - one file must not fail the index
+                except Exception as exc:  # noqa: BLE001 - one file must not fail the index
                     text = None
+                    logger.warning("file fetch failed for %s: %s", item.path, type(exc).__name__)
                 if text is None:
                     fetch_failures += 1
                     warnings.append(f"Could not fetch or decode: {item.path}")

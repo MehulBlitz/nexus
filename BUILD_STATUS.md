@@ -25,7 +25,7 @@ Last updated: Core Release 1 implementation session.
 | Database models + migration | TESTED | 16 tables; Alembic upgrade → downgrade → upgrade on SQLite |
 | PostgreSQL | TESTED | Docker Compose PostgreSQL 16; migrations and `/api/v1/ready` passed |
 | GitHub import + indexing | TESTED | integration flow with mocked HTTP transport |
-| Live public GitHub import | BLOCKED | not performed; rate-limit/network behaviour unverified |
+| Live public GitHub import | BLOCKED | GitHub metadata fetch for `psf/requests` succeeded; worker indexing did not finish within five minutes |
 | Code intelligence (Python AST, JS/TS/Java lexer) | TESTED | analyzer unit tests + integration counts/warnings |
 | Knowledge graph + traversal + impact | TESTED | unit, Hypothesis properties, integration |
 | Risk engine | TESTED | unit, property and integration; evidence persisted |
@@ -34,19 +34,19 @@ Last updated: Core Release 1 implementation session.
 | Investigation workflow (backend) | TESTED | queue → agents → evidence verification → result |
 | Frontend pages + graph explorer + forms | TESTED | `tsc --noEmit`, ESLint, 9 Vitest tests, production build |
 | Frontend browser rendering | TESTED | local dev server; screenshots captured (landing, dashboard, repositories) |
-| Playwright E2E scenario | BLOCKED | browsers not installed; no E2E run claimed |
+| Playwright E2E scenario | BLOCKED | test reached the runner, but Chromium/headless-shell extraction stalled after download |
 | MCP server (7 tools) | TESTED | 11 tests with `httpx.MockTransport`; Ruff clean |
 | Live MCP calls from Kiro | BLOCKED | requires Kiro client; not performed |
 | Reports + Markdown export | TESTED | integration report generation and export content |
 | Background jobs | TESTED | durable jobs table; inline executor and worker entry point |
-| Dockerfiles + Compose | TESTED | `docker compose build`; stack smoke test with healthy DB/backend and frontend HTTP 200 |
+| Dockerfiles + Compose | TESTED | images built; PostgreSQL/backend/worker startup smoke passed; frontend HTTP 200; worker healthcheck corrected |
 | Redis/RQ | NOT STARTED (deviation) | replaced by durable database queue; documented |
 | CI workflows | IMPLEMENTED | `.github/workflows/ci.yml`, `security.yml`; not executed on GitHub here |
 | Security hardening | TESTED (application controls) | auth/CSRF/ownership/URL/redaction tests; no external scan |
 | Production deployment / HTTPS | BLOCKED | not performed |
 | Public URL / video / Devpost | NOT STARTED | outside this environment |
-| Playwright browsers | BLOCKED | not installed |
-| Dependency audits (`pip-audit`, `npm audit`) | BLOCKED | npm audit found 2 moderate React Router issues; pip-audit and container scans not run |
+| Playwright browsers | BLOCKED | Chromium download completed but extraction stalled; no executable became available |
+| Dependency audits (`pip-audit`, `npm audit`) | TESTED | backend/MCP audits clean after pytest pin update; npm audit has 2 moderate React Router findings; container scans unavailable |
 
 ## Executed checks (actual results)
 
@@ -63,6 +63,7 @@ Last updated: Core Release 1 implementation session.
 | Alembic on SQLite | upgrade → downgrade base → upgrade, exit 0 (recorded in migration run) |
 | Docker Compose | images built; PostgreSQL/backend healthy; `/api/v1/ready` passed; frontend returned HTTP 200 |
 | `cd frontend && npm audit --audit-level=high --omit=dev` | 2 moderate React Router findings remain after safe upgrades |
+| `pip-audit` | backend and MCP lockfiles clean; backend audit excluded Windows-incompatible `uvloop` |
 
 ## Bugs found and fixed during integration
 
@@ -80,7 +81,7 @@ Last updated: Core Release 1 implementation session.
 - `tree-sitter` is unavailable for the installed Python 3.15; JS/TS/Java use a lexer.
 - Risk weights are assumptions, not calibrated probabilities.
 - Rate limiting is in-process; SSE state is in-process.
-- Live GitHub, Playwright and Kiro MCP calls remain unverified.
+- Live GitHub indexing, Playwright and Kiro MCP calls remain unverified; GitHub metadata fetch succeeded but indexing timed out.
 - `backend/requirements.lock` is a filtered freeze/constraint file, not a hash-locked resolver output.
 - `mcp-server/requirements.lock` is a compatible pin list generated manually.
 - CI workflows were not executed on GitHub from this environment.
@@ -89,6 +90,6 @@ Last updated: Core Release 1 implementation session.
 
 1. Execute the Playwright scenario and commit its report.
 2. Import a real public demo repository and capture graph/risk/investigation screenshots.
-3. Run `pip-audit`, npm audit, Trivy/Gitleaks, and record results.
+3. Run Trivy/Gitleaks when available; resolve or formally accept the remaining React Router findings.
 4. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
 5. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.

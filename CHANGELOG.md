@@ -50,8 +50,8 @@
 
 ### Not verified
 
-- Live GitHub import, live LLM, Playwright E2E, Kiro MCP calls, public deployment, dependency and
-  container scans.
+- Live GitHub import, live LLM, Playwright E2E (browser extraction stalled), Kiro MCP calls, public
+  deployment, dependency and container scans.
 
 ### Post-release verification
 
@@ -60,3 +60,7 @@
   test.
 - Frontend React Router and Zod dependencies were upgraded; npm audit now reports two moderate
   React Router findings requiring a future major upgrade.
+- Backend `pytest` lock pin was upgraded to 9.0.3; backend and MCP `pip-audit` checks report no
+  known vulnerabilities.
+- Compose worker healthcheck corrected so the non-HTTP worker is not marked unhealthy by the API
+  health probe.

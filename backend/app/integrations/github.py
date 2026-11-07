@@ -132,12 +132,19 @@ class GitHubClient:
             transport=transport,
             follow_redirects=False,
         )
+        self._raw_client = httpx.Client(
+            headers=headers,
+            timeout=timeout_seconds,
+            transport=transport,
+            follow_redirects=False,
+        )
         self._raw_base = raw_base.rstrip("/")
         self._max_retries = max_retries
         self._sleep = sleep
 
     def close(self) -> None:
         self._client.close()
+        self._raw_client.close()
 
     def __enter__(self) -> GitHubClient:
         return self
@@ -221,7 +228,7 @@ class GitHubClient:
             f"{sha}/{quote(path, safe='/')}"
         )
         try:
-            with self._client.stream("GET", url) as response:
+            with self._raw_client.stream("GET", url) as response:
                 if response.status_code == 404:
                     return None
                 if response.status_code != 200:

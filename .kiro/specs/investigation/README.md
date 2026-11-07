@@ -1,7 +1,7 @@
 # Investigation spec
 
-Status: IMPLEMENTED · TESTED (backend integration). The UI is built and typechecked; no Playwright
-E2E run was performed.
+Status: IMPLEMENTED · TESTED (backend integration). The UI is built and typechecked; Playwright E2E
+was attempted but blocked by Chromium extraction.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ E2E run was performed.
 - [x] SSE endpoint streams progress and a terminal event.
 - [x] Cross-user access returns 404.
 - [x] UI polls while running and renders the timeline, hypotheses and plan.
-- [ ] Playwright E2E scenario including investigation (not run).
+- [ ] Playwright E2E scenario including investigation (browser installation blocked).
 
 ## Design
 
@@ -53,7 +53,7 @@ evidence). UI: `features/investigations/InvestigationsPage.tsx`.
 - [x] SSE and polling.
 - [x] UI with timeline/evidence/plan.
 - [x] Backend integration tests.
-- [ ] Committed E2E test run.
+- [ ] Committed E2E test run (browser installation blocked).
 
 ## Tests
 

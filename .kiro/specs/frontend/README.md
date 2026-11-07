@@ -1,7 +1,7 @@
 # Frontend spec
 
 Status: IMPLEMENTED · TESTED (TypeScript strict, ESLint, Vitest, production build). Browser E2E was
-not run in this environment; screenshots of the running UI are captured separately.
+attempted but blocked by Chromium extraction; screenshots of the running UI are captured separately.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ not run in this environment; screenshots of the running UI are captured separate
 - [x] Reports render Markdown and download the exported file.
 - [x] Settings expose tokens, password change and account deletion.
 - [x] Typecheck, lint, unit tests and production build pass.
-- [ ] Playwright scenario executed (browsers not installed; not claimed).
+- [ ] Playwright scenario executed (Chromium extraction stalled after download).
 
 ## Design
 
@@ -52,7 +52,7 @@ proxies it in development.
 - [x] Agents and reports.
 - [x] Settings.
 - [x] Unit tests and build.
-- [ ] E2E and visual regression suite.
+- [ ] E2E and visual regression suite (browser installation remains blocked).
 
 ## Tests
 
