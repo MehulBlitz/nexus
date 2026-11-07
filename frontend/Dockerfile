@@ -6,6 +6,7 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.27-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nexus.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
+CMD ["sh", "-c", "envsubst '${BACKEND_URL}' < /etc/nginx/nexus.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
