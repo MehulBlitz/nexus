@@ -109,4 +109,4 @@ MCP server are both clients of the same versioned HTTP API.
   process (`JOB_EXECUTION_MODE=worker`).
 - Email verification is not implemented because no transactional email provider is configured.
 - Private repositories, write actions and code execution are out of scope.
-- Docker and PostgreSQL were not runnable in the authoring environment; see BUILD_STATUS.
+- Docker and PostgreSQL passed a local Compose smoke test; public deployment remains unverified.

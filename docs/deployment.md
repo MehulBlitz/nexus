@@ -2,9 +2,9 @@
 
 ## Status
 
-The Dockerfiles and Compose file are written but **were not built or run** in the authoring
-environment (no Docker daemon). PostgreSQL was not available; migrations were exercised against
-SQLite only. Treat container and production steps as unverified until you run them.
+The Dockerfiles and Compose file were built and smoke-tested locally. PostgreSQL migrations and
+the `/api/v1/ready` endpoint passed in the Compose stack; public production deployment remains
+unverified.
 
 ## Local development without Docker
 
@@ -90,7 +90,7 @@ python -m alembic current
 ```
 
 The initial migration creates 16 tables and indexes. Generated with autogenerate, reviewed, and
-exercised on SQLite (upgrade → downgrade → upgrade). PostgreSQL execution remains unverified.
+exercised on SQLite (upgrade → downgrade → upgrade) and in the Compose PostgreSQL smoke test.
 
 ## Backup and recovery
 
@@ -114,7 +114,7 @@ exercised on SQLite (upgrade → downgrade → upgrade). PostgreSQL execution re
 | Backend runs on SQLite, tests pass | Verified locally |
 | Alembic upgrade/downgrade on SQLite | Verified locally |
 | Frontend builds and runs | Verified locally |
-| Docker images / Compose | Written, unverified |
-| PostgreSQL | Unverified |
+| Docker images / Compose | Built and smoke-tested locally |
+| PostgreSQL | Migrations and readiness smoke-tested locally |
 | Public HTTPS deployment | Not performed |
 | Backup/restore drill | Not performed |

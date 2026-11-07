@@ -77,7 +77,8 @@ wildcard CORS origin, or a SQLite database URL. API docs are disabled in product
 
 ## Known gaps / unverified
 
-- Docker images and Compose networking were not built or run here.
+- External container/network hardening and production deployment were not performed; the local
+  Docker Compose build and readiness smoke test passed.
 - PostgreSQL row-level behaviour and backup/restore were not exercised.
 - No external penetration test, ZAP scan, container scan, or Playwright security test was run.
 - Rate limiting is single-process; a horizontally scaled deployment needs Redis or a gateway limiter.

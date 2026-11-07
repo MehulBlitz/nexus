@@ -6,9 +6,9 @@ Understand a codebase. Investigate problems with evidence. See engineering risk 
 behind it. Coordinate specialised agents. Reach the same intelligence through MCP.
 
 > **Status: Core Release 1 implemented and locally tested.** Backend, frontend and MCP test suites
-> pass; the production frontend builds. Docker/Compose and PostgreSQL were **not** run in the
-> authoring environment, and no public deployment exists. See [BUILD_STATUS.md](BUILD_STATUS.md) for
-> the exact evidence and every unverified item.
+> pass; the production frontend builds; Docker Compose and PostgreSQL have passed a local smoke
+> test. No public deployment exists. See [BUILD_STATUS.md](BUILD_STATUS.md) for the exact evidence
+> and every unverified item.
 
 ![Landing page](docs/screenshots/landing.png)
 
@@ -146,7 +146,7 @@ python -m alembic downgrade -1
 ```
 
 The initial migration creates 16 tables and indexes. It was exercised on SQLite (upgrade, downgrade,
-upgrade); PostgreSQL execution is unverified.
+upgrade) and during the Docker Compose PostgreSQL smoke test.
 
 ## Tests and checks
 
@@ -224,7 +224,7 @@ verification, public HTTPS deployment. Do not treat this build as production-ver
 
 ## Known limitations
 
-- Docker/Compose and PostgreSQL are unverified; Redis/RQ is not used (durable DB queue instead).
+- Redis/RQ is not used (durable DB queue instead).
 - Python 3.15 has no `tree-sitter` wheel; JS/TS/Java use a lexer with honest coverage reporting.
 - Java support is basic; no type resolution or cross-file call graph beyond imports.
 - Rate limits and SSE are in-process; multi-replica deployment needs shared infrastructure.

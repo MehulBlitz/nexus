@@ -1,7 +1,7 @@
 # Deployment and security spec
 
-Status: Security controls IMPLEMENTED · TESTED. Docker/Compose files are IMPLEMENTED but BLOCKED from
-verification (no Docker daemon). Public deployment is BLOCKED.
+Status: Security controls IMPLEMENTED · TESTED. Docker/Compose and PostgreSQL migrations are TESTED
+locally. Public deployment is BLOCKED.
 
 ## Requirements
 
@@ -26,8 +26,8 @@ verification (no Docker daemon). Public deployment is BLOCKED.
 - [x] Log redaction tests pass.
 - [x] MCP token auth and ownership reuse backend checks.
 - [x] Backend/frontend/MCP test suites and builds pass locally.
-- [ ] `docker compose up --build` (BLOCKED: Docker unavailable).
-- [ ] PostgreSQL migrations exercised (only SQLite exercised locally).
+- [x] `docker compose up --build` (local smoke test; readiness and frontend HTTP 200 passed).
+- [x] PostgreSQL migrations exercised in the Compose stack.
 - [ ] Container/image scanning and live deployment.
 - [ ] Playwright E2E and security ZAP/browser checks.
 

@@ -23,7 +23,7 @@ Last updated: Core Release 1 implementation session.
 | Backend API (auth, repositories, graph, risk, investigations, agents, reports, system) | TESTED | `pytest` 115 passed; `ruff check .` clean |
 | Authentication + authorization | TESTED | auth unit/integration tests, cross-user 404 checks |
 | Database models + migration | TESTED | 16 tables; Alembic upgrade → downgrade → upgrade on SQLite |
-| PostgreSQL | BLOCKED | no PostgreSQL server available |
+| PostgreSQL | TESTED | Docker Compose PostgreSQL 16; migrations and `/api/v1/ready` passed |
 | GitHub import + indexing | TESTED | integration flow with mocked HTTP transport |
 | Live public GitHub import | BLOCKED | not performed; rate-limit/network behaviour unverified |
 | Code intelligence (Python AST, JS/TS/Java lexer) | TESTED | analyzer unit tests + integration counts/warnings |
@@ -39,7 +39,7 @@ Last updated: Core Release 1 implementation session.
 | Live MCP calls from Kiro | BLOCKED | requires Kiro client; not performed |
 | Reports + Markdown export | TESTED | integration report generation and export content |
 | Background jobs | TESTED | durable jobs table; inline executor and worker entry point |
-| Dockerfiles + Compose | IMPLEMENTED | written/reviewed; **never built or run** (no Docker daemon) |
+| Dockerfiles + Compose | TESTED | `docker compose build`; stack smoke test with healthy DB/backend and frontend HTTP 200 |
 | Redis/RQ | NOT STARTED (deviation) | replaced by durable database queue; documented |
 | CI workflows | IMPLEMENTED | `.github/workflows/ci.yml`, `security.yml`; not executed on GitHub here |
 | Security hardening | TESTED (application controls) | auth/CSRF/ownership/URL/redaction tests; no external scan |
@@ -78,7 +78,7 @@ Last updated: Core Release 1 implementation session.
 - `tree-sitter` is unavailable for the installed Python 3.15; JS/TS/Java use a lexer.
 - Risk weights are assumptions, not calibrated probabilities.
 - Rate limiting is in-process; SSE state is in-process.
-- Docker/Compose, PostgreSQL, live GitHub, Playwright and Kiro MCP calls remain unverified.
+- Live GitHub, Playwright and Kiro MCP calls remain unverified.
 - `backend/requirements.lock` is a filtered freeze/constraint file, not a hash-locked resolver output.
 - `mcp-server/requirements.lock` is a compatible pin list generated manually.
 - CI workflows were not executed on GitHub from this environment.

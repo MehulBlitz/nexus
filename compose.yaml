@@ -1,6 +1,5 @@
 # NEXUS local stack.
-# STATUS: definitions written and reviewed; never built or run in the authoring environment
-# (no Docker daemon). See docs/deployment.md and BUILD_STATUS.md.
+# STATUS: definitions built and smoke-tested locally. See docs/deployment.md and BUILD_STATUS.md.
 #
 # Redis is intentionally absent: jobs are durable rows in the database and are executed by the
 # `worker` service. This is a documented deviation from the original Redis/RQ plan.
