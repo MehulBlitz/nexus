@@ -126,6 +126,17 @@ def build_graph(
                     detail="directory containment",
                 )
             )
+        file_parent = posixpath.dirname(parsed.path)
+        edges.append(
+            EdgeSpec(
+                source_key=f"dir:{file_parent}" if file_parent else "repository",
+                target_key=file_key,
+                relationship_type="CONTAINS",
+                confidence=1.0,
+                origin="parsed",
+                detail="file containment",
+            )
+        )
         if parsed.symbols:
             for symbol in parsed.symbols:
                 symbol_key = f"symbol:{parsed.path}::{symbol.qualified_name or symbol.name}"

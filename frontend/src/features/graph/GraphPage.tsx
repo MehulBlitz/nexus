@@ -40,58 +40,50 @@ const edgeColors: Record<string, string> = {
 function layout(nodes: GraphNode[], edges: GraphEdge[]): Node[] {
   const nodeIds = new Set(nodes.map((node) => node.id));
   const children = new Map<string, string[]>();
-  const indegree = new Map(nodes.map((node) => [node.id, 0]));
-
+  const parent = new Map<string, string>();
   for (const edge of edges) {
-    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) continue;
+    if (edge.relationship_type !== "CONTAINS") continue;
+    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target) || parent.has(edge.target)) continue;
+    parent.set(edge.target, edge.source);
     children.set(edge.source, [...(children.get(edge.source) ?? []), edge.target]);
-    indegree.set(edge.target, (indegree.get(edge.target) ?? 0) + 1);
   }
 
-  const levels = new Map<string, number>();
-  const queue = nodes.filter((node) => indegree.get(node.id) === 0).map((node) => node.id);
-  for (const id of queue) levels.set(id, 0);
-
-  for (let index = 0; index < queue.length; index += 1) {
-    const id = queue[index]!;
-    for (const child of children.get(id) ?? []) {
-      const nextLevel = Math.max(levels.get(child) ?? 0, (levels.get(id) ?? 0) + 1);
-      levels.set(child, nextLevel);
-      indegree.set(child, (indegree.get(child) ?? 1) - 1);
-      if (indegree.get(child) === 0) queue.push(child);
-    }
-  }
-
-  // Cycles and disconnected nodes still get a stable position instead of overlapping.
-  let fallbackLevel = Math.max(0, ...levels.values()) + 1;
-  for (const node of nodes) {
-    if (!levels.has(node.id)) levels.set(node.id, fallbackLevel++);
-  }
-
-  const grouped = new Map<number, GraphNode[]>();
-  for (const node of nodes) {
-    const level = levels.get(node.id)!;
-    grouped.set(level, [...(grouped.get(level) ?? []), node]);
-  }
+  const roots = nodes.filter((node) => !parent.has(node.id));
+  const positions = new Map<string, { x: number; y: number }>();
+  const visited = new Set<string>();
+  let cursor = 0;
+  const place = (id: string, depth: number) => {
+    if (visited.has(id)) return;
+    visited.add(id);
+    const childIds = children.get(id) ?? [];
+    for (const childId of childIds) place(childId, depth + 1);
+    const childPositions = childIds
+      .map((childId) => positions.get(childId))
+      .filter((position): position is { x: number; y: number } => Boolean(position));
+    const x = childPositions.length
+      ? childPositions.reduce((sum, position) => sum + position.x, 0) / childPositions.length
+      : cursor++;
+    positions.set(id, { x, y: depth });
+  };
+  for (const root of roots) place(root.id, 0);
+  for (const node of nodes) if (!visited.has(node.id)) place(node.id, 0);
 
   return nodes.map((node) => {
-    const level = levels.get(node.id)!;
-    const row = grouped.get(level)!;
-    const index = row.findIndex((item) => item.id === node.id);
+    const position = positions.get(node.id) ?? { x: cursor++, y: 0 };
     return {
-    id: node.id,
-    position: { x: index * 250, y: level * 155 },
-    data: { label: `${node.name}${node.node_type === "file" ? "" : ` · ${node.node_type}`}` },
-    style: {
-      width: 190,
-      border: `1px solid ${typeColors[node.node_type] ?? "#262b37"}`,
-      borderLeft: `4px solid ${typeColors[node.node_type] ?? "#262b37"}`,
-      background: "#151820",
-      color: "#e7e9ef",
-      fontSize: 11,
-      borderRadius: 8,
-      padding: "8px 10px",
-    },
+      id: node.id,
+      position: { x: position.x * 240, y: position.y * 155 },
+      data: { label: `${node.name}${node.node_type === "file" ? "" : ` · ${node.node_type}`}` },
+      style: {
+        width: 190,
+        border: `1px solid ${typeColors[node.node_type] ?? "#262b37"}`,
+        borderLeft: `4px solid ${typeColors[node.node_type] ?? "#262b37"}`,
+        background: "#151820",
+        color: "#e7e9ef",
+        fontSize: 11,
+        borderRadius: 8,
+        padding: "8px 10px",
+      },
     };
   });
 }
