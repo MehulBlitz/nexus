@@ -13,7 +13,9 @@ permissions:
 
 jobs:
   playwright:
-    runs-on: ubuntu-latest
+    # Keep this pinned: ubuntu-latest can advance to an OS version unsupported by
+    # the Playwright release in frontend/package-lock.json.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

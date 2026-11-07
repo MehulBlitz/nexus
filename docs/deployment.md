@@ -66,8 +66,8 @@ investigations/reports.
 
 ## Free verification and hosting path
 
-Push the repository to GitHub and run the manual **End-to-end** workflow in Actions. It installs
-Chromium with Playwright's Ubuntu dependencies, starts the Compose stack, imports
+Push the repository to GitHub and run the manual **End-to-end** workflow in Actions. It runs on
+Ubuntu 24.04, installs Chromium with Playwright's Ubuntu dependencies, starts the Compose stack, imports
 `octocat/Hello-World` by default, and uploads the Playwright report.
 
 For a free public demo, use a free web-service host such as Render for the backend and frontend and
