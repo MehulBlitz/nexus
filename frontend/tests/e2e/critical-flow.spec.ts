@@ -40,7 +40,8 @@ test.describe("import → graph → risk → investigation → report", () => {
     await expect(page.getByText("Language distribution")).toBeVisible();
 
     // Graph: select a node and run impact analysis.
-    await page.getByRole("link", { name: "Graph" }).click();
+    const workspace = page.locator("main");
+    await workspace.getByRole("link", { name: "Graph" }).click();
     await expect(page.locator(".react-flow__node").first()).toBeVisible({ timeout: 30_000 });
     await page.locator(".react-flow__node").first().click();
     await expect(page.getByText("Node details")).toBeVisible();
@@ -48,21 +49,21 @@ test.describe("import → graph → risk → investigation → report", () => {
     await expect(page.getByText("Impact analysis")).toBeVisible();
 
     // Risk: run analysis and open a finding if one exists.
-    await page.getByRole("link", { name: "Risk center" }).click();
+    await workspace.getByRole("link", { name: "Risk center" }).click();
     const runAnalysis = page.getByRole("button", { name: /Run analysis|Re-run analysis/ });
     await runAnalysis.click();
     await expect(page.getByText("Overall score")).toBeVisible({ timeout: 120_000 });
     await expect(page.getByText(/not a probability/).first()).toBeVisible();
 
     // Investigation: submit and wait for the agent timeline.
-    await page.getByRole("link", { name: "Investigations" }).click();
+    await workspace.getByRole("link", { name: "Investigations" }).click();
     await page.getByLabel("Question").fill("Where is the highest-coupling module and what could break?");
     await page.getByRole("button", { name: "Investigate" }).click();
     await expect(page.getByText("Agent timeline")).toBeVisible({ timeout: 150_000 });
     await expect(page.getByText(/completed|failed/).first()).toBeVisible({ timeout: 150_000 });
 
     // Report: generate and download Markdown.
-    await page.getByRole("link", { name: "Reports" }).click();
+    await workspace.getByRole("link", { name: "Reports" }).click();
     await page.getByRole("button", { name: "Generate" }).click();
     await expect(page.getByText(/Generated .* by NEXUS/)).toBeVisible({ timeout: 60_000 });
     const download = page.waitForEvent("download");
