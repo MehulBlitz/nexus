@@ -44,17 +44,6 @@ jobs:
           POSTGRES_DB=nexus
           EOF
       - name: Start Compose stack
-        env:
-          APP_ENV: development
-          APP_SECRET_KEY: ci-only-not-a-real-secret
-          DATABASE_URL: postgresql+psycopg://nexus:ci-only-password@db:5432/nexus
-          POSTGRES_USER: nexus
-          POSTGRES_PASSWORD: ci-only-password
-          POSTGRES_DB: nexus
-          CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
-          FRONTEND_URL: http://127.0.0.1:5173
-          JOB_EXECUTION_MODE: worker
-          MCP_SERVICE_TOKEN: ci-only-not-a-real-token
         run: |
           docker compose up -d
           for i in {1..30}; do
