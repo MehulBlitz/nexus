@@ -5,6 +5,7 @@ from functools import lru_cache
 
 from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.core.config import get_settings
 
@@ -14,8 +15,17 @@ def utcnow() -> datetime:
     return datetime.now(UTC)
 
 
+def ensure_utc(value: datetime) -> datetime:
+    """Return a timezone-aware datetime.
+
+    SQLite does not preserve tzinfo, so values read back from it are naive. They were written
+    as UTC, so attaching UTC restores the intended meaning before comparison.
+    """
+    return value if value.tzinfo is not None else value.replace(tzinfo=UTC)
+
+
 class Base(DeclarativeBase):
-    """Declarative base for all ORM models (added in later phases)."""
+    """Declarative base for all ORM models."""
 
 
 @lru_cache
@@ -24,6 +34,9 @@ def get_engine() -> Engine:
     kwargs: dict = {"pool_pre_ping": True}
     if url.startswith("sqlite"):
         kwargs["connect_args"] = {"check_same_thread": False}
+        if ":memory:" in url:
+            # Every connection must see the same in-memory database.
+            kwargs["poolclass"] = StaticPool
     return create_engine(url, **kwargs)
 
 

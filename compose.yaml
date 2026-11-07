@@ -1,6 +1,10 @@
-# Services that exist today: db, redis, backend, frontend.
-# worker and mcp-server are added in later phases (see BUILD_STATUS.md).
-# STATUS: written, NOT run (Docker unavailable in the authoring sandbox).
+# NEXUS local stack.
+# STATUS: definitions written and reviewed; never built or run in the authoring environment
+# (no Docker daemon). See docs/deployment.md and BUILD_STATUS.md.
+#
+# Redis is intentionally absent: jobs are durable rows in the database and are executed by the
+# `worker` service. This is a documented deviation from the original Redis/RQ plan.
+
 services:
   db:
     image: postgres:16-alpine
@@ -16,34 +20,64 @@ services:
       timeout: 3s
       retries: 10
 
-  redis:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
   backend:
     build: ./backend
     env_file: .env
+    environment:
+      JOB_EXECUTION_MODE: worker
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     ports:
       - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/ready').status==200 else 1)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  worker:
+    build: ./backend
+    command: ["python", "-m", "app.workers.runner"]
+    env_file: .env
+    environment:
+      JOB_EXECUTION_MODE: worker
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "5173:80"
 
+  # MCP speaks stdio, so it is not a long-running port. Attach an MCP client with:
+  #   docker compose --profile mcp run --rm mcp
+  # MCP_SERVICE_TOKEN must be a personal API token created in NEXUS Settings.
+  mcp:
+    profiles: ["mcp"]
+    build: ./mcp-server
+    stdin_open: true
+    tty: true
+    environment:
+      NEXUS_API_URL: http://backend:8000
+      NEXUS_API_TOKEN: ${MCP_SERVICE_TOKEN:?set MCP_SERVICE_TOKEN to a personal API token}
+      NEXUS_MCP_ALLOW_WRITES: ${MCP_ALLOW_WRITES:-0}
+    depends_on:
+      backend:
+        condition: service_healthy
+
 volumes:
   db_data:
-  redis_data:

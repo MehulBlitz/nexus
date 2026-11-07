@@ -9,13 +9,16 @@ description = "NEXUS backend API"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115,<1.0",
-  "uvicorn[standard]>=0.30,<1.0",
+  "uvicorn>=0.30,<1.0",
   "pydantic>=2.8,<3.0",
   "pydantic-settings>=2.4,<3.0",
+  "email-validator>=2.1,<3.0",
   "sqlalchemy>=2.0,<2.1",
   "alembic>=1.13,<2.0",
   "psycopg[binary]>=3.2,<4.0",
   "httpx>=0.27,<1.0",
+  "argon2-cffi>=23.1,<26.0",
+  "networkx>=3.3,<4.0",
 ]
 
 [project.optional-dependencies]
@@ -39,5 +42,11 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "S", "SIM"]
 
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency-injection style intentionally calls Depends() in signatures.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body"]
+
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "S105", "S106"]
+"tests/*" = ["S101", "S105", "S106", "S107", "S311"]
+# Alembic autogenerate output is machine-written; long lines are expected.
+"migrations/versions/*" = ["E501"]

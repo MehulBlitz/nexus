@@ -1,62 +1,93 @@
 # BUILD_STATUS
 
-Last updated: Phase 0 + Phase 1 session.
+Last updated: Core Release 1 implementation session.
 
-**Status values:** NOT WORKED ON · IN PROGRESS · BLOCKED · IMPLEMENTED · TESTED · VERIFIED
-- **NOT WORKED ON** = not started, or cannot be done/verified in the authoring sandbox.
-- **TESTED** = automated tests ran and passed (evidence below).
-- **VERIFIED** is reserved for end-to-end evidence in a real environment. Nothing is VERIFIED yet.
+**Allowed status values:** NOT STARTED · IN PROGRESS · BLOCKED · IMPLEMENTED · TESTED · VERIFIED
 
-## Summary table
+- **IMPLEMENTED** — code/config exists and was reviewed, but its behaviour is not covered by an
+  executed check here.
+- **TESTED** — an automated check was executed in this environment and passed (evidence below).
+- **VERIFIED** — end-to-end evidence in a real environment. Nothing in this file is VERIFIED except
+  where explicitly stated; no public deployment or Docker run exists.
+
+## Summary
 
 | Area | Status | Evidence |
 |---|---|---|
-| Monorepo + `.kiro/` structure | TESTED | `.kiro/` present and not git-ignored (`git check-ignore .kiro` returns nothing) |
-| Kiro steering (5 docs) | IMPLEMENTED | `.kiro/steering/*.md` |
-| Kiro custom agents (4) | IMPLEMENTED | `.kiro/agents/*.md` (definitions only, never run inside Kiro) |
-| Kiro foundation spec | IMPLEMENTED | `.kiro/specs/foundation/` requirements, design, tasks |
-| Other 11 Kiro specs | NOT WORKED ON | stub README per folder |
-| Kiro hooks | NOT WORKED ON | must be created through the Kiro UI |
-| Kiro MCP connection / usage log evidence | NOT WORKED ON | needs a real Kiro session |
-| Backend foundation (Phase 1) | TESTED | 26 pytest tests pass; Ruff clean; live `uvicorn` served `/health`, `/ready`, `/version` and the standard 404 body |
-| Alembic wiring | TESTED | `alembic upgrade head` exit 0 on SQLite; no models or migrations yet |
-| Database (PostgreSQL) | NOT WORKED ON | only SQLite exercised; no Postgres in sandbox |
-| Frontend shell (Phase 0/3 skeleton) | TESTED | `tsc` strict, ESLint, 9 Vitest tests, production build, `npm audit` 0 vulnerabilities; rendered in Chromium against live backend (pass, fail and 390px mobile states) |
-| Authentication | NOT WORKED ON | Phase 2 |
-| Full frontend (pages, graph UI) | NOT WORKED ON | Phase 3+ |
-| GitHub import / activity | NOT WORKED ON | Phases 4, 10 |
-| Code intelligence | NOT WORKED ON | Phase 5 |
-| Knowledge graph | NOT WORKED ON | Phase 6 |
-| Risk engine | NOT WORKED ON | Phase 7 |
-| Multi-agent system / Ollama | NOT WORKED ON | Phase 8 (no model available here) |
-| Investigations | NOT WORKED ON | Phase 9 |
-| MCP server | NOT WORKED ON | Phase 11 |
-| Reports | NOT WORKED ON | Phase 12 |
-| Background worker (RQ/Redis) | NOT WORKED ON | no worker code; Redis not exercised |
-| Dockerfiles + `compose.yaml` | IMPLEMENTED | written, YAML parses; **never built or run** (no Docker in sandbox) |
-| Docker Compose end-to-end | NOT WORKED ON | cannot run here |
-| Playwright E2E scenario | NOT WORKED ON | only an ad-hoc screenshot script was used, not committed as a test |
-| CI workflows (`.github/workflows`) | NOT WORKED ON | folder exists, no workflows yet |
-| Security docs / hardening (Phase 13) | NOT WORKED ON | foundation guards only: prod secret/CORS/SQLite checks, log redaction, no stack traces to clients |
-| Production deployment, public URL | NOT WORKED ON | cannot be done in this environment |
-| Demo repo, video, Devpost submission | NOT WORKED ON | outside what can be done here |
-| Screenshots in `docs/screenshots/` | NOT WORKED ON | ad-hoc shots taken in `/tmp`, not committed |
+| Monorepo structure | IMPLEMENTED | `backend/`, `frontend/`, `mcp-server/`, `shared/`, `infrastructure/`, `docs/` |
+| `.kiro/` steering (5) | IMPLEMENTED | `.kiro/steering/*.md`; not git-ignored |
+| `.kiro/` specs (foundation + 11) | IMPLEMENTED | requirements/acceptance/design/tasks/tests in each spec |
+| Kiro custom agents (4) | IMPLEMENTED | definitions only; never executed in Kiro |
+| Kiro hooks | IMPLEMENTED (proposal) | `.kiro/hooks/README.md`; **not installed** |
+| Kiro MCP connection / usage evidence | BLOCKED | requires a real Kiro session |
+| Backend API (auth, repositories, graph, risk, investigations, agents, reports, system) | TESTED | `pytest` 115 passed; `ruff check .` clean |
+| Authentication + authorization | TESTED | auth unit/integration tests, cross-user 404 checks |
+| Database models + migration | TESTED | 16 tables; Alembic upgrade → downgrade → upgrade on SQLite |
+| PostgreSQL | BLOCKED | no PostgreSQL server available |
+| GitHub import + indexing | TESTED | integration flow with mocked HTTP transport |
+| Live public GitHub import | BLOCKED | not performed; rate-limit/network behaviour unverified |
+| Code intelligence (Python AST, JS/TS/Java lexer) | TESTED | analyzer unit tests + integration counts/warnings |
+| Knowledge graph + traversal + impact | TESTED | unit, Hypothesis properties, integration |
+| Risk engine | TESTED | unit, property and integration; evidence persisted |
+| Multi-agent orchestration | TESTED | fake-repository flow; all five agents complete; failures isolated |
+| Live LLM (Ollama/OpenAI-compatible) | BLOCKED | no model/server available; deterministic fallback tested |
+| Investigation workflow (backend) | TESTED | queue → agents → evidence verification → result |
+| Frontend pages + graph explorer + forms | TESTED | `tsc --noEmit`, ESLint, 9 Vitest tests, production build |
+| Frontend browser rendering | TESTED | local dev server; screenshots captured (landing, dashboard, repositories) |
+| Playwright E2E scenario | BLOCKED | browsers not installed; no E2E run claimed |
+| MCP server (7 tools) | TESTED | 11 tests with `httpx.MockTransport`; Ruff clean |
+| Live MCP calls from Kiro | BLOCKED | requires Kiro client; not performed |
+| Reports + Markdown export | TESTED | integration report generation and export content |
+| Background jobs | TESTED | durable jobs table; inline executor and worker entry point |
+| Dockerfiles + Compose | IMPLEMENTED | written/reviewed; **never built or run** (no Docker daemon) |
+| Redis/RQ | NOT STARTED (deviation) | replaced by durable database queue; documented |
+| CI workflows | IMPLEMENTED | `.github/workflows/ci.yml`, `security.yml`; not executed on GitHub here |
+| Security hardening | TESTED (application controls) | auth/CSRF/ownership/URL/redaction tests; no external scan |
+| Production deployment / HTTPS | BLOCKED | not performed |
+| Public URL / video / Devpost | NOT STARTED | outside this environment |
+| Playwright browsers | BLOCKED | not installed |
+| Dependency audits (`pip-audit`, `npm audit`) | BLOCKED | configured in CI; not run here |
 
-## Completed in this session
-- Phase 0: skeleton, ignore files, `.env.example`, MIT license, Makefile, steering, agents, foundation spec.
-- Phase 1: settings with production validation; JSON logging with secret redaction; correlation IDs; consistent error bodies; SQLAlchemy engine + readiness check; Alembic; `/api/v1/{health,ready,version}`.
+## Executed checks (actual results)
 
-## Bugs found and fixed by tests
-1. Starlette's built-in 404s bypassed the standard error body (wrong `HTTPException` class registered).
-2. Log redaction left bearer tokens visible when preceded by `Authorization:`; fixed by ordering the patterns.
-3. A proxy 5xx with no API body showed "Internal Server Error" in the UI; it now says the API is unreachable.
-4. Vitest 3 had critical audit findings (tinypool); upgraded to 5.1.0 and pinned a patched `minimatch` via `overrides`.
+| Command | Result |
+|---|---|
+| `cd backend && python -m ruff check .` | All checks passed |
+| `cd backend && python -m pytest -q` | **115 passed** |
+| `cd frontend && npx tsc --noEmit` | exit 0 |
+| `cd frontend && npm run lint` | exit 0 |
+| `cd frontend && npx vitest run` | **9 passed** (2 files) |
+| `cd frontend && npm run build` | exit 0; production bundle emitted (Vite warned about a >500 kB chunk) |
+| `cd mcp-server && PYTHONPATH=. pytest -q` | **11 passed** |
+| `cd mcp-server && python -m ruff check .` | All checks passed |
+| Alembic on SQLite | upgrade → downgrade base → upgrade, exit 0 (recorded in migration run) |
 
-## Known limitations
-- `backend/requirements.lock` is a filtered `pip freeze` of the sandbox install, not a hash-locked resolver lock.
-- `compose.yaml` lists only services that exist (`db`, `redis`, `backend`, `frontend`). `worker` and `mcp-server` come later. The `backend` image has not been built.
-- The frontend loads IBM Plex from Google Fonts; screenshots here used fallback fonts because the sandbox blocks that host.
-- Backend Python deps were audited by version pin only; `pip-audit` was not run.
+## Bugs found and fixed during integration
 
-## Next
-Phase 2 (authentication) needs its own spec first. Awaiting approval to start.
+1. NetworkX degree views (`InDegreeView`) were treated as dicts in risk scoring and the mapper.
+2. Impact analysis returned a shape that did not match `ImpactResult` (missing `node`), causing a 500.
+3. Activity cache stored `datetime` objects in a JSON column, causing a `StatementError`.
+4. Agent output schemas did not reject unknown fields; strict models added.
+5. Report Markdown omitted the heuristic disclaimer when no risk run existed.
+6. In-memory SQLite could not serve parallel agent threads; tests now use a file database.
+7. Test assumption about TypeScript file count corrected (two TS files, not one).
+
+## Known limitations / deviations
+
+- Redis/RQ is not implemented; the durable `jobs` table plus inline/worker executor is used.
+- `tree-sitter` is unavailable for the installed Python 3.15; JS/TS/Java use a lexer.
+- Risk weights are assumptions, not calibrated probabilities.
+- Rate limiting is in-process; SSE state is in-process.
+- Docker/Compose, PostgreSQL, live GitHub, Playwright and Kiro MCP calls remain unverified.
+- `backend/requirements.lock` is a filtered freeze/constraint file, not a hash-locked resolver output.
+- `mcp-server/requirements.lock` is a compatible pin list generated manually.
+- CI workflows were not executed on GitHub from this environment.
+
+## Next steps to reach full verification
+
+1. `docker compose up --build` with PostgreSQL; run migrations and the health checks.
+2. Execute the Playwright scenario and commit its report.
+3. Import a real public demo repository and capture graph/risk/investigation screenshots.
+4. Run `pip-audit`, `npm audit`, Trivy/Gitleaks, and record results.
+5. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
+6. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.

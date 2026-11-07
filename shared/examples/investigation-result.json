@@ -1,0 +1,33 @@
+{
+  "_note": "Illustrative payload for documentation only. Not produced by a real repository.",
+  "status": "completed",
+  "ai_used": false,
+  "result": {
+    "summary": "Session state is recreated from a token that does not include the refresh path.",
+    "hypotheses": [
+      {
+        "title": "Refresh handler drops the cookie before reading it",
+        "confidence": 0.62,
+        "reasoning": "The handler reads the session cookie after clearing response cookies.",
+        "origin": "inferred",
+        "evidence": [
+          {
+            "file": "app/session.py",
+            "start_line": 12,
+            "end_line": 28,
+            "origin": "measured"
+          }
+        ],
+        "suggested_check": "Add a test that posts to /auth/refresh with an expired session cookie."
+      }
+    ],
+    "recommended_actions": ["Add a regression test for the refresh path."],
+    "limitations": ["No LLM configured; reasoning is deterministic and may miss semantic causes."],
+    "evidence_verification": { "files_checked": 6, "issues": [] },
+    "ai": {
+      "used": false,
+      "provider": "none",
+      "note": "Deterministic analysis only."
+    }
+  }
+}

@@ -32,6 +32,38 @@ class NotFoundError(AppError):
     status_code = 404
 
 
+class UnauthorizedError(AppError):
+    code = "unauthorized"
+    status_code = 401
+
+
+class ForbiddenError(AppError):
+    code = "forbidden"
+    status_code = 403
+
+
+class ConflictError(AppError):
+    code = "conflict"
+    status_code = 409
+
+
+class RateLimitedError(AppError):
+    code = "rate_limited"
+    status_code = 429
+
+
+class UpstreamError(AppError):
+    """A dependency (GitHub, the AI provider) failed in a way the client should know about."""
+
+    code = "upstream_error"
+    status_code = 502
+
+
+class UnprocessableError(AppError):
+    code = "unprocessable"
+    status_code = 422
+
+
 def error_body(code: str, message: str, details: object | None = None) -> dict:
     body: dict = {"error": {"code": code, "message": message, "request_id": get_request_id()}}
     if details is not None:
@@ -42,7 +74,12 @@ def error_body(code: str, message: str, details: object | None = None) -> dict:
 def register_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppError)
     async def _app_error(_: Request, exc: AppError) -> JSONResponse:
-        return JSONResponse(error_body(exc.code, exc.message), status_code=exc.status_code)
+        headers = None
+        if isinstance(exc, RateLimitedError) and hasattr(exc, "retry_after"):
+            headers = {"Retry-After": str(int(exc.retry_after or 1))}
+        return JSONResponse(
+            error_body(exc.code, exc.message), status_code=exc.status_code, headers=headers
+        )
 
     @app.exception_handler(HTTPException)
     async def _http_error(_: Request, exc: HTTPException) -> JSONResponse:
