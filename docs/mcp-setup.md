@@ -72,8 +72,9 @@ All other tools are read-only.
 ## Verification status
 
 - Unit tests (mocked transport): 11 passing.
-- Live MCP call from Kiro: **not performed** in this environment. Do not claim it as verified until
-  you run it and capture the tool output.
+- Live MCP calls from Kiro: **verified** against the indexed `MehulBlitz/nexus` repository.
+  All seven tools completed successfully, including investigation polling and Markdown report
+  generation.
 
 ## Free Kiro verification steps
 

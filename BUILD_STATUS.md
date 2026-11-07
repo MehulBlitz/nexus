@@ -1,6 +1,6 @@
 # BUILD_STATUS
 
-Last updated: GitHub Actions E2E verification run 42371333297.
+Last updated: Live Kiro MCP verification for MehulBlitz/nexus.
 
 **Allowed status values:** NOT STARTED · IN PROGRESS · BLOCKED · IMPLEMENTED · TESTED · VERIFIED
 
@@ -19,7 +19,7 @@ Last updated: GitHub Actions E2E verification run 42371333297.
 | `.kiro/` specs (foundation + 11) | IMPLEMENTED | requirements/acceptance/design/tasks/tests in each spec |
 | Kiro custom agents (4) | IMPLEMENTED | definitions only; never executed in Kiro |
 | Kiro hooks | IMPLEMENTED (proposal) | `.kiro/hooks/README.md`; **not installed** |
-| Kiro MCP connection / usage evidence | BLOCKED | requires a real Kiro session |
+| Kiro MCP connection / usage evidence | VERIFIED | All 7 tools completed against `MehulBlitz/nexus`; overview, search, dependency, risk, investigation/status, and report calls succeeded |
 | Backend API (auth, repositories, graph, risk, investigations, agents, reports, system) | TESTED | `pytest` 115 passed; `ruff check .` clean |
 | Authentication + authorization | TESTED | auth unit/integration tests, cross-user 404 checks |
 | Database models + migration | TESTED | 16 tables; Alembic upgrade → downgrade → upgrade on SQLite |
@@ -36,7 +36,7 @@ Last updated: GitHub Actions E2E verification run 42371333297.
 | Frontend browser rendering | TESTED | local dev server; screenshots captured (landing, dashboard, repositories) |
 | Playwright E2E scenario | VERIFIED | GitHub Actions run [42371333297](https://github.com/MehulBlitz/nexus/actions/runs/42371333297), job [128399905969](https://github.com/MehulBlitz/nexus/actions/runs/42371333297/job/128399905969): Chromium install, Compose startup, critical flow, report upload, and cleanup passed |
 | MCP server (7 tools) | TESTED | 11 tests with `httpx.MockTransport`; Ruff clean |
-| Live MCP calls from Kiro | BLOCKED | requires Kiro client; not performed |
+| Live MCP calls from Kiro | VERIFIED | Kiro executed all 7 NEXUS MCP tools against repository UUID `fc733cc1-c450-4457-8f80-dad5853793fa`; investigation completed at 100% with all 5 agents successful |
 | Reports + Markdown export | TESTED | integration report generation and export content |
 | Background jobs | TESTED | durable jobs table; inline executor and worker entry point |
 | Dockerfiles + Compose | TESTED | images built; PostgreSQL/backend/worker startup smoke passed; frontend HTTP 200; worker healthcheck corrected |
@@ -82,7 +82,7 @@ Last updated: GitHub Actions E2E verification run 42371333297.
 - `tree-sitter` is unavailable for the installed Python 3.15; JS/TS/Java use a lexer.
 - Risk weights are assumptions, not calibrated probabilities.
 - Rate limiting is in-process; SSE state is in-process.
-- Kiro MCP calls remain unverified; live GitHub indexing completed for a small public repository.
+- Kiro MCP verification used the indexed `MehulBlitz/nexus` repository; live GitHub indexing also completed for `octocat/Hello-World`.
 - `backend/requirements.lock` is a filtered freeze/constraint file, not a hash-locked resolver output.
 - `mcp-server/requirements.lock` is a compatible pin list generated manually.
 - CI and security workflows still need separate successful runs; the manual E2E workflow is verified.
@@ -91,5 +91,4 @@ Last updated: GitHub Actions E2E verification run 42371333297.
 
 1. Import a real public demo repository and capture graph/risk/investigation screenshots.
 2. Run Trivy/Gitleaks when available.
-3. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
-4. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.
+3. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.
