@@ -50,7 +50,7 @@ export function InvestigationsPage() {
         onSuccess: (investigation) => {
           setQuestion("");
           setScope("");
-          navigate(`investigations/${investigation.id}`);
+          navigate(investigation.id);
         },
       },
     );
