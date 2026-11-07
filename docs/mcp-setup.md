@@ -74,3 +74,13 @@ All other tools are read-only.
 - Unit tests (mocked transport): 11 passing.
 - Live MCP call from Kiro: **not performed** in this environment. Do not claim it as verified until
   you run it and capture the tool output.
+
+## Free Kiro verification steps
+
+1. Start the local Compose stack with `docker compose up -d`.
+2. Register a local user, open **Settings → API tokens**, and create a token.
+3. Add the JSON configuration above to Kiro's MCP configuration. Use the absolute path to the
+   repository's Python executable if `python` is not on Kiro's PATH.
+4. Reload Kiro MCP servers and run `get_repository_overview` against the imported repository.
+5. Run one read-only search tool, capture the tool result, and update `BUILD_STATUS.md`.
+6. Keep `NEXUS_MCP_ALLOW_WRITES=0` unless explicitly testing investigation/report writes.

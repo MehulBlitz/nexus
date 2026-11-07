@@ -5,6 +5,8 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
+from app.core.database import get_sessionmaker
+from app.models.job import Job
 from app.services import job_service
 from tests.conftest import register
 from tests.fake_github import build_test_client
@@ -47,6 +49,27 @@ def test_import_requires_a_valid_github_url(auth_client):
         assert response.status_code == 422, url
         # Short strings fail schema validation; valid-looking non-GitHub URLs fail the adapter.
         assert response.json()["error"]["code"] in {"unprocessable", "validation_error"}
+
+
+def test_worker_claimed_job_is_executed(auth_client, fake_github):
+    response = auth_client.post(
+        "/api/v1/repositories", json={"url": "https://github.com/acme/demo"}
+    )
+    assert response.status_code == 201
+    job_id = response.json()["active_job"]["id"]
+
+    with get_sessionmaker()() as session:
+        job = session.get(Job, job_id)
+        assert job is not None
+        job.status = "RUNNING"
+        session.commit()
+
+    job_service.execute_job(job_id)
+
+    with get_sessionmaker()() as session:
+        job = session.get(Job, job_id)
+        assert job is not None
+        assert job.status == "COMPLETED"
 
 
 def test_indexing_produces_real_code_intelligence(indexed, auth_client):

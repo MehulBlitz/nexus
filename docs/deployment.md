@@ -64,6 +64,18 @@ docker compose --profile ai up -d ollama      # local inference
 `jobs` table is the queue. Set `MCP_ALLOW_WRITES=1` only if you want MCP clients to create
 investigations/reports.
 
+## Free verification and hosting path
+
+Push the repository to GitHub and run the manual **End-to-end** workflow in Actions. It installs
+Chromium with Playwright's Ubuntu dependencies, starts the Compose stack, imports
+`octocat/Hello-World` by default, and uploads the Playwright report.
+
+For a free public demo, use a free web-service host such as Render for the backend and frontend and
+its free PostgreSQL offering where available. Free instances sleep and have limited storage, so use
+them only for a demo. Keep `AI_PROVIDER=none`, set an explicit HTTPS `FRONTEND_URL` and
+`CORS_ORIGINS`, and use a strong generated `APP_SECRET_KEY`. Account creation, service
+provisioning, and secret entry still require the user.
+
 ## Production checklist
 
 1. `APP_ENV=production` and a random `APP_SECRET_KEY` of 32+ characters.
@@ -121,4 +133,4 @@ exercised on SQLite (upgrade → downgrade → upgrade) and in the Compose Postg
 | PostgreSQL | Migrations and readiness smoke-tested locally |
 | Public HTTPS deployment | Not performed |
 | Backup/restore drill | Not performed |
-| Dependency/container scans | pip-audit clean for backend/MCP; npm audit reports two moderate React Router findings; Trivy/Gitleaks unavailable |
+| Dependency/container scans | pip-audit clean for backend/MCP; npm audit reports 0 vulnerabilities; Trivy/Gitleaks unavailable locally |

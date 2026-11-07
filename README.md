@@ -134,8 +134,8 @@ Services: PostgreSQL, backend (migrations + API), worker, frontend (nginx). Opti
 docker compose --profile mcp run --rm mcp
 ```
 
-> The Compose stack has **not been built or run** here. Treat it as configuration awaiting
-> verification, not as a tested deployment.
+> The Compose stack has been built and smoke-tested locally. Treat public production deployment as
+> unverified until deployed behind HTTPS.
 
 ## Migrations
 
@@ -159,8 +159,9 @@ make check                              # all of the above
 ```
 
 Backend integration tests use a mocked GitHub transport; they exercise the real service, parser,
-graph, risk, agent and report layers. No test requires a paid AI key. Playwright configuration is
-present, but browsers were not installed and the E2E scenario was not executed.
+graph, risk, agent and report layers. No test requires a paid AI key. Run the browser scenario from
+GitHub Actions with the manual `End-to-end` workflow; it installs Chromium on Ubuntu and uses a
+real public repository URL.
 
 ## MCP
 
@@ -230,7 +231,7 @@ verification, public HTTPS deployment. Do not treat this build as production-ver
 - Rate limits and SSE are in-process; multi-replica deployment needs shared infrastructure.
 - Email verification, password reset, private repositories and write actions are absent.
 - Risk weights are documented assumptions, not calibrated probabilities.
-- Live GitHub import and live MCP/Kiro calls were not verified in this environment.
+- Live GitHub import was verified with `octocat/Hello-World`; live MCP/Kiro calls were not verified.
 - Playwright E2E was attempted but blocked by Chromium extraction; screenshots cover the landing,
   dashboard and repository page only.
 - Video, public URL and Devpost submission are outside this build.
@@ -242,7 +243,7 @@ verification, public HTTPS deployment. Do not treat this build as production-ver
 3. Shared rate-limit store and horizontally scalable workers.
 4. GitHub App/OAuth for private repositories with a security review.
 5. Calibrate risk weights and add trend analysis across snapshots.
-6. Resolve Playwright browser installation in CI, then run E2E and accessibility checks.
+6. Run the manual Playwright E2E workflow and add accessibility checks in CI.
 7. Public demo deployment and a three-minute recording.
 
 ## Contributing

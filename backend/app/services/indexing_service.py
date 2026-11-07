@@ -77,7 +77,9 @@ def index_repository(
     session.flush()
     try:
         report(5, "Fetching repository metadata")
-        logger.info("indexing %s: resolving branch %s", repository.full_name, repository.default_branch)
+        logger.info(
+            "indexing %s: resolving branch %s", repository.full_name, repository.default_branch
+        )
         branch_info = github.get_branch(ref, repository.default_branch)
         logger.info("indexing %s: branch resolved", repository.full_name)
         commit_sha = (branch_info.get("commit") or {}).get("sha")
@@ -95,7 +97,9 @@ def index_repository(
         report(15, "Listing repository files")
         logger.info("indexing %s: listing tree", repository.full_name)
         tree = github.get_tree(ref, commit_sha)
-        logger.info("indexing %s: tree listed (%s entries)", repository.full_name, tree.total_entries)
+        logger.info(
+            "indexing %s: tree listed (%s entries)", repository.full_name, tree.total_entries
+        )
         selected, skipped, truncated = select_files(
             tree.files,
             max_files=settings.max_index_files,

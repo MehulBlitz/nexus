@@ -64,12 +64,13 @@ def execute_job(job_id: str) -> None:
         job = jobs_repo.get_job(session, job_id)
         if job is None:
             return
-        if job.status != "QUEUED":
+        if job.status not in {"QUEUED", "RUNNING"}:
             return
-        job.status = "RUNNING"
-        job.started_at = job.started_at or utcnow()
-        job.attempts += 1
-        session.commit()
+        if job.status == "QUEUED":
+            job.status = "RUNNING"
+            job.started_at = job.started_at or utcnow()
+            job.attempts += 1
+            session.commit()
         logger.info("job %s started (%s)", job.id, job.job_type)
 
         def progress(percent: int, _message: str) -> None:
