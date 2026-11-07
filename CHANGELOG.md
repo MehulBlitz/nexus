@@ -70,3 +70,5 @@
   Chromium installation, Compose startup, the complete critical flow, report upload, and cleanup all passed.
 - Verified all seven NEXUS MCP tools from Kiro against `MehulBlitz/nexus`, including a completed
   five-agent investigation and generated release report.
+- Verified the Render public HTTPS smoke path: frontend and backend health/readiness endpoints
+  returned 200 and the database readiness check returned `ok`.

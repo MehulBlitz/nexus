@@ -1,6 +1,6 @@
 # BUILD_STATUS
 
-Last updated: Live Kiro MCP verification for MehulBlitz/nexus.
+Last updated: Public Render HTTPS smoke verification.
 
 **Allowed status values:** NOT STARTED · IN PROGRESS · BLOCKED · IMPLEMENTED · TESTED · VERIFIED
 
@@ -43,8 +43,8 @@ Last updated: Live Kiro MCP verification for MehulBlitz/nexus.
 | Redis/RQ | NOT STARTED (deviation) | replaced by durable database queue; documented |
 | CI workflows | IMPLEMENTED | `.github/workflows/ci.yml`, `security.yml`, manual `.github/workflows/e2e.yml`; E2E workflow externally verified |
 | Security hardening | TESTED (application controls) | auth/CSRF/ownership/URL/redaction tests; no external scan |
-| Production deployment / HTTPS | BLOCKED | not performed |
-| Public URL / video / Devpost | NOT STARTED | outside this environment |
+| Production deployment / HTTPS | TESTED | Render frontend [nexus-frontend-gbx2.onrender.com](https://nexus-frontend-gbx2.onrender.com/) and backend are reachable over HTTPS; health and readiness return 200 with database ok |
+| Public URL / video / Devpost | IN PROGRESS | Public demo URL is available; video recording and Devpost submission remain user actions |
 | Playwright browsers | TESTED | Chromium installation passed on GitHub Actions Ubuntu 24.04; local Windows extraction remains unavailable |
 | Dependency audits (`pip-audit`, `npm audit`) | TESTED | backend/MCP/npm audits clean; Trivy/Gitleaks unavailable |
 
@@ -65,6 +65,7 @@ Last updated: Live Kiro MCP verification for MehulBlitz/nexus.
 | `cd frontend && npm audit --audit-level=high --omit=dev` | 0 vulnerabilities after React Router 7.18.5 upgrade |
 | `pip-audit` | backend and MCP lockfiles clean; backend audit excluded Windows-incompatible `uvloop` |
 | GitHub Actions E2E run 42371333297 | **passed** | Ubuntu 24.04; Chromium install, Compose startup, critical flow, report upload, and cleanup all passed |
+| Render public smoke check | **passed** | Frontend `/`, `/api/v1/health`, and `/api/v1/ready` returned 200; backend health/readiness returned 200; readiness reported database `ok` |
 
 ## Bugs found and fixed during integration
 
@@ -86,9 +87,10 @@ Last updated: Live Kiro MCP verification for MehulBlitz/nexus.
 - `backend/requirements.lock` is a filtered freeze/constraint file, not a hash-locked resolver output.
 - `mcp-server/requirements.lock` is a compatible pin list generated manually.
 - CI and security workflows still need separate successful runs; the manual E2E workflow is verified.
+- Public account creation, import, graph, risk, investigation, and report flows still require browser verification with a user-created account.
 
 ## Next steps to reach full verification
 
-1. Import a real public demo repository and capture graph/risk/investigation screenshots.
+1. Run the public browser flow and capture screenshots/video.
 2. Run Trivy/Gitleaks when available.
-3. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.
+3. Add a PostgreSQL backup/restore drill before treating the deployment as production-ready.

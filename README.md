@@ -5,10 +5,10 @@
 Understand a codebase. Investigate problems with evidence. See engineering risk and the signals
 behind it. Coordinate specialised agents. Reach the same intelligence through MCP.
 
-> **Status: Core Release 1 implemented and locally tested.** Backend, frontend and MCP test suites
-> pass; the production frontend builds; Docker Compose and PostgreSQL have passed a local smoke
-> test. No public deployment exists. See [BUILD_STATUS.md](BUILD_STATUS.md) for the exact evidence
-> and every unverified item.
+> **Status: Core Release 1 implemented and publicly deployed for demo verification.** Backend,
+> frontend and MCP test suites pass; the production frontend builds; Docker Compose and PostgreSQL
+> have passed a local smoke test; the public Render demo is reachable over HTTPS. See
+> [BUILD_STATUS.md](BUILD_STATUS.md) for exact evidence and remaining user-session checks.
 
 ![Landing page](docs/screenshots/landing.png)
 

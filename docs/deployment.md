@@ -2,9 +2,9 @@
 
 ## Status
 
-The Dockerfiles and Compose file were built and smoke-tested locally. PostgreSQL migrations and
-the `/api/v1/ready` endpoint passed in the Compose stack; public production deployment remains
-unverified.
+The Dockerfiles and Compose file were built and smoke-tested locally. The Render demo is reachable
+over HTTPS; frontend and backend health/readiness checks pass and the public database readiness check
+reports `ok`. Full authenticated browser-flow verification and backup/restore remain pending.
 
 ## Local development without Docker
 
@@ -134,6 +134,6 @@ exercised on SQLite (upgrade → downgrade → upgrade) and in the Compose Postg
 | Frontend builds and runs | Verified locally |
 | Docker images / Compose | Built and smoke-tested locally |
 | PostgreSQL | Migrations and readiness smoke-tested locally |
-| Public HTTPS deployment | Not performed |
+| Public HTTPS deployment | Smoke-tested on Render; authenticated browser flow pending |
 | Backup/restore drill | Not performed |
 | Dependency/container scans | pip-audit clean for backend/MCP; npm audit reports 0 vulnerabilities; Trivy/Gitleaks unavailable locally |
