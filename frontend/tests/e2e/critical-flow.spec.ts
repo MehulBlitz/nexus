@@ -31,6 +31,7 @@ test.describe("import → graph → risk → investigation → report", () => {
     await page.getByLabel("GitHub repository URL").fill(repoUrl!);
     await page.getByRole("button", { name: "Import" }).click();
     await expect(page.getByText("Open repository")).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByText(/Indexing finished\./)).toBeVisible({ timeout: 150_000 });
     await page.getByRole("link", { name: "Open repository" }).click();
 
     // Indexing must finish with real data.
