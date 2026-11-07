@@ -46,7 +46,7 @@ Last updated: Core Release 1 implementation session.
 | Production deployment / HTTPS | BLOCKED | not performed |
 | Public URL / video / Devpost | NOT STARTED | outside this environment |
 | Playwright browsers | BLOCKED | not installed |
-| Dependency audits (`pip-audit`, `npm audit`) | BLOCKED | configured in CI; not run here |
+| Dependency audits (`pip-audit`, `npm audit`) | BLOCKED | npm audit found 2 moderate React Router issues; pip-audit and container scans not run |
 
 ## Executed checks (actual results)
 
@@ -61,6 +61,8 @@ Last updated: Core Release 1 implementation session.
 | `cd mcp-server && PYTHONPATH=. pytest -q` | **11 passed** |
 | `cd mcp-server && python -m ruff check .` | All checks passed |
 | Alembic on SQLite | upgrade → downgrade base → upgrade, exit 0 (recorded in migration run) |
+| Docker Compose | images built; PostgreSQL/backend healthy; `/api/v1/ready` passed; frontend returned HTTP 200 |
+| `cd frontend && npm audit --audit-level=high --omit=dev` | 2 moderate React Router findings remain after safe upgrades |
 
 ## Bugs found and fixed during integration
 
@@ -85,9 +87,8 @@ Last updated: Core Release 1 implementation session.
 
 ## Next steps to reach full verification
 
-1. `docker compose up --build` with PostgreSQL; run migrations and the health checks.
-2. Execute the Playwright scenario and commit its report.
-3. Import a real public demo repository and capture graph/risk/investigation screenshots.
-4. Run `pip-audit`, `npm audit`, Trivy/Gitleaks, and record results.
-5. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
-6. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.
+1. Execute the Playwright scenario and commit its report.
+2. Import a real public demo repository and capture graph/risk/investigation screenshots.
+3. Run `pip-audit`, npm audit, Trivy/Gitleaks, and record results.
+4. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
+5. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.

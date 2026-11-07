@@ -118,3 +118,4 @@ exercised on SQLite (upgrade → downgrade → upgrade) and in the Compose Postg
 | PostgreSQL | Migrations and readiness smoke-tested locally |
 | Public HTTPS deployment | Not performed |
 | Backup/restore drill | Not performed |
+| Dependency/container scans | Not performed; npm audit reports two moderate React Router findings |

@@ -50,5 +50,13 @@
 
 ### Not verified
 
-- Docker/Compose, PostgreSQL, live GitHub import, live LLM, Playwright E2E, Kiro MCP calls, public
-  deployment, dependency/container scans.
+- Live GitHub import, live LLM, Playwright E2E, Kiro MCP calls, public deployment, dependency and
+  container scans.
+
+### Post-release verification
+
+- Docker Compose images built successfully.
+- PostgreSQL migrations, backend readiness, and frontend HTTP reachability passed in a local smoke
+  test.
+- Frontend React Router and Zod dependencies were upgraded; npm audit now reports two moderate
+  React Router findings requiring a future major upgrade.
