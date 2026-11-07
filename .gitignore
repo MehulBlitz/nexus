@@ -1,0 +1,22 @@
+# NOTE: .kiro/ must stay committed. Never add it here.
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+.mypy_cache/
+*.egg-info/
+*.sqlite3
+*.db
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+*.log
