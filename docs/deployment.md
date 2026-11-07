@@ -54,7 +54,8 @@ docker compose up --build
 
 Services: `db` (PostgreSQL 16), `backend` (migrations + uvicorn), `worker`, `frontend` (nginx on
 `:5173`). Set `BACKEND_URL=http://backend:8000` for Compose; separate hosting providers must set
-it to the public backend HTTPS URL. Optional profiles:
+it to the public backend HTTPS URL. The backend Docker image runs `alembic upgrade head` before
+Uvicorn starts, so free providers without a pre-deploy hook still apply migrations. Optional profiles:
 
 ```bash
 docker compose --profile mcp run --rm mcp     # stdio MCP client
