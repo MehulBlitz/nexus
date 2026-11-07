@@ -1,6 +1,6 @@
 # BUILD_STATUS
 
-Last updated: Worker fix and external-verification preparation session.
+Last updated: GitHub Actions E2E verification run 42371333297.
 
 **Allowed status values:** NOT STARTED · IN PROGRESS · BLOCKED · IMPLEMENTED · TESTED · VERIFIED
 
@@ -8,7 +8,7 @@ Last updated: Worker fix and external-verification preparation session.
   executed check here.
 - **TESTED** — an automated check was executed in this environment and passed (evidence below).
 - **VERIFIED** — end-to-end evidence in a real environment. Nothing in this file is VERIFIED except
-  where explicitly stated; public deployment and GitHub Actions execution remain pending.
+  where explicitly stated; public deployment and Kiro MCP execution remain pending.
 
 ## Summary
 
@@ -34,18 +34,18 @@ Last updated: Worker fix and external-verification preparation session.
 | Investigation workflow (backend) | TESTED | queue → agents → evidence verification → result |
 | Frontend pages + graph explorer + forms | TESTED | `tsc --noEmit`, ESLint, 9 Vitest tests, production build |
 | Frontend browser rendering | TESTED | local dev server; screenshots captured (landing, dashboard, repositories) |
-| Playwright E2E scenario | IMPLEMENTED | manual GitHub Actions workflow installs Chromium on Ubuntu and uploads the report; execution remains pending |
+| Playwright E2E scenario | VERIFIED | GitHub Actions run [42371333297](https://github.com/MehulBlitz/nexus/actions/runs/42371333297), job [128399905969](https://github.com/MehulBlitz/nexus/actions/runs/42371333297/job/128399905969): Chromium install, Compose startup, critical flow, report upload, and cleanup passed |
 | MCP server (7 tools) | TESTED | 11 tests with `httpx.MockTransport`; Ruff clean |
 | Live MCP calls from Kiro | BLOCKED | requires Kiro client; not performed |
 | Reports + Markdown export | TESTED | integration report generation and export content |
 | Background jobs | TESTED | durable jobs table; inline executor and worker entry point |
 | Dockerfiles + Compose | TESTED | images built; PostgreSQL/backend/worker startup smoke passed; frontend HTTP 200; worker healthcheck corrected |
 | Redis/RQ | NOT STARTED (deviation) | replaced by durable database queue; documented |
-| CI workflows | IMPLEMENTED | `.github/workflows/ci.yml`, `security.yml`, manual `.github/workflows/e2e.yml`; GitHub execution remains pending |
+| CI workflows | IMPLEMENTED | `.github/workflows/ci.yml`, `security.yml`, manual `.github/workflows/e2e.yml`; E2E workflow externally verified |
 | Security hardening | TESTED (application controls) | auth/CSRF/ownership/URL/redaction tests; no external scan |
 | Production deployment / HTTPS | BLOCKED | not performed |
 | Public URL / video / Devpost | NOT STARTED | outside this environment |
-| Playwright browsers | BLOCKED locally | Chromium extraction stalled on Windows; GitHub Actions Ubuntu workflow is the supported workaround |
+| Playwright browsers | TESTED | Chromium installation passed on GitHub Actions Ubuntu 24.04; local Windows extraction remains unavailable |
 | Dependency audits (`pip-audit`, `npm audit`) | TESTED | backend/MCP/npm audits clean; Trivy/Gitleaks unavailable |
 
 ## Executed checks (actual results)
@@ -64,6 +64,7 @@ Last updated: Worker fix and external-verification preparation session.
 | Docker Compose | images built; PostgreSQL/backend healthy; `/api/v1/ready` passed; frontend returned HTTP 200 |
 | `cd frontend && npm audit --audit-level=high --omit=dev` | 0 vulnerabilities after React Router 7.18.5 upgrade |
 | `pip-audit` | backend and MCP lockfiles clean; backend audit excluded Windows-incompatible `uvloop` |
+| GitHub Actions E2E run 42371333297 | **passed** | Ubuntu 24.04; Chromium install, Compose startup, critical flow, report upload, and cleanup all passed |
 
 ## Bugs found and fixed during integration
 
@@ -81,15 +82,14 @@ Last updated: Worker fix and external-verification preparation session.
 - `tree-sitter` is unavailable for the installed Python 3.15; JS/TS/Java use a lexer.
 - Risk weights are assumptions, not calibrated probabilities.
 - Rate limiting is in-process; SSE state is in-process.
-- Playwright and Kiro MCP calls remain unverified; live GitHub indexing completed for a small public repository.
+- Kiro MCP calls remain unverified; live GitHub indexing completed for a small public repository.
 - `backend/requirements.lock` is a filtered freeze/constraint file, not a hash-locked resolver output.
 - `mcp-server/requirements.lock` is a compatible pin list generated manually.
-- CI workflows were not executed on GitHub from this environment.
+- CI and security workflows still need separate successful runs; the manual E2E workflow is verified.
 
 ## Next steps to reach full verification
 
-1. Run the manual GitHub Actions Playwright workflow and review its uploaded report.
-2. Import a real public demo repository and capture graph/risk/investigation screenshots.
-3. Run Trivy/Gitleaks when available.
-4. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
-5. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.
+1. Import a real public demo repository and capture graph/risk/investigation screenshots.
+2. Run Trivy/Gitleaks when available.
+3. Connect Kiro to the MCP server, call at least two tools, and capture evidence.
+4. Deploy behind HTTPS with backups, then mark deployment VERIFIED only with a live URL.

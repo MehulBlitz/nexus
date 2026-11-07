@@ -50,7 +50,7 @@
 
 ### Not verified
 
-- Live LLM, Playwright E2E (browser extraction stalled), Kiro MCP calls, public deployment, and
+- Live LLM, Kiro MCP calls, public deployment, and
   container scans.
 
 ### Post-release verification
@@ -66,3 +66,5 @@
   health probe.
 - Fixed worker job execution: claimed `RUNNING` jobs were previously ignored by the executor,
   leaving live indexing jobs stuck at zero progress.
+- Verified the manual Playwright workflow on GitHub Actions run [42371333297](https://github.com/MehulBlitz/nexus/actions/runs/42371333297):
+  Chromium installation, Compose startup, the complete critical flow, report upload, and cleanup all passed.
