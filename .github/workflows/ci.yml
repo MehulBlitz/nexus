@@ -67,11 +67,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare Compose environment
+        run: |
+          cat > .env <<'EOF'
+          APP_ENV=development
+          APP_SECRET_KEY=ci-only-not-a-real-secret
+          DATABASE_URL=postgresql+psycopg://nexus:ci-only-password@db:5432/nexus
+          FRONTEND_URL=http://localhost:5173
+          CORS_ORIGINS=http://localhost:5173
+          JOB_EXECUTION_MODE=worker
+          MCP_SERVICE_TOKEN=ci-only-not-a-real-token
+          POSTGRES_USER=nexus
+          POSTGRES_PASSWORD=ci-only-password
+          POSTGRES_DB=nexus
+          EOF
       - name: Validate compose.yaml
         run: docker compose config --quiet
-        env:
-          POSTGRES_USER: nexus
-          POSTGRES_PASSWORD: ci-only-password
-          POSTGRES_DB: nexus
-          APP_SECRET_KEY: ci-only-not-a-real-secret
-          MCP_SERVICE_TOKEN: ci-only-not-a-real-token
