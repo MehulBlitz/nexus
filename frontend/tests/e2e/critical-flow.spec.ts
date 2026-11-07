@@ -17,7 +17,7 @@ test.describe("import → graph → risk → investigation → report", () => {
   test.skip(!repoUrl, "Set E2E_REPO_URL to a public demo repository to run this scenario.");
 
   test("a developer can investigate a repository end to end", async ({ page }) => {
-    const email = `e2e-${Date.now()}@example.test`;
+    const email = `e2e-${Date.now()}@example.com`;
     const password = "e2e-password-12345";
 
     await page.goto("/register");
