@@ -41,7 +41,7 @@ test.describe("import → graph → risk → investigation → report", () => {
 
     // Graph: select a node and run impact analysis.
     const workspace = page.locator("main");
-    await workspace.getByRole("link", { name: "Graph" }).click();
+    await workspace.locator('a[href$="/graph"]').first().click();
     await expect(page.locator(".react-flow__node").first()).toBeVisible({ timeout: 30_000 });
     await page.locator(".react-flow__node").first().click();
     await expect(page.getByText("Node details")).toBeVisible();
