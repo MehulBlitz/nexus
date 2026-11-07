@@ -60,7 +60,8 @@ docker compose --profile mcp run --rm mcp     # stdio MCP client
 docker compose --profile ai up -d ollama      # local inference
 ```
 
-`MCP_SERVICE_TOKEN` must contain a personal API token. Redis is intentionally absent: the durable
+When starting the optional `mcp` profile, `MCP_SERVICE_TOKEN` must contain a personal API token.
+Redis is intentionally absent: the durable
 `jobs` table is the queue. Set `MCP_ALLOW_WRITES=1` only if you want MCP clients to create
 investigations/reports.
 

@@ -74,7 +74,7 @@ services:
     tty: true
     environment:
       NEXUS_API_URL: http://backend:8000
-      NEXUS_API_TOKEN: ${MCP_SERVICE_TOKEN:?set MCP_SERVICE_TOKEN to a personal API token}
+      NEXUS_API_TOKEN: ${MCP_SERVICE_TOKEN:-}
       NEXUS_MCP_ALLOW_WRITES: ${MCP_ALLOW_WRITES:-0}
     depends_on:
       backend:
