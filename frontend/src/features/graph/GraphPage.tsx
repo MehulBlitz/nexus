@@ -37,11 +37,50 @@ const edgeColors: Record<string, string> = {
   DEPENDS_ON: "#e8c468",
 };
 
-function layout(nodes: GraphNode[]): Node[] {
-  const columns = Math.max(3, Math.ceil(Math.sqrt(nodes.length)));
-  return nodes.map((node, index) => ({
+function layout(nodes: GraphNode[], edges: GraphEdge[]): Node[] {
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const children = new Map<string, string[]>();
+  const indegree = new Map(nodes.map((node) => [node.id, 0]));
+
+  for (const edge of edges) {
+    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) continue;
+    children.set(edge.source, [...(children.get(edge.source) ?? []), edge.target]);
+    indegree.set(edge.target, (indegree.get(edge.target) ?? 0) + 1);
+  }
+
+  const levels = new Map<string, number>();
+  const queue = nodes.filter((node) => indegree.get(node.id) === 0).map((node) => node.id);
+  for (const id of queue) levels.set(id, 0);
+
+  for (let index = 0; index < queue.length; index += 1) {
+    const id = queue[index]!;
+    for (const child of children.get(id) ?? []) {
+      const nextLevel = Math.max(levels.get(child) ?? 0, (levels.get(id) ?? 0) + 1);
+      levels.set(child, nextLevel);
+      indegree.set(child, (indegree.get(child) ?? 1) - 1);
+      if (indegree.get(child) === 0) queue.push(child);
+    }
+  }
+
+  // Cycles and disconnected nodes still get a stable position instead of overlapping.
+  let fallbackLevel = Math.max(0, ...levels.values()) + 1;
+  for (const node of nodes) {
+    if (!levels.has(node.id)) levels.set(node.id, fallbackLevel++);
+  }
+
+  const grouped = new Map<number, GraphNode[]>();
+  for (const node of nodes) {
+    const level = levels.get(node.id)!;
+    grouped.set(level, [...(grouped.get(level) ?? []), node]);
+  }
+
+  return nodes.map((node) => {
+    const level = levels.get(node.id)!;
+    const row = grouped.get(level)!;
+    const index = row.findIndex((item) => item.id === node.id);
+    return {
     id: node.id,
-    position: { x: (index % columns) * 230, y: Math.floor(index / columns) * 130 },
+    position: { x: index * 250, y: level * 155 },
     data: { label: `${node.name}${node.node_type === "file" ? "" : ` · ${node.node_type}`}` },
     style: {
       width: 190,
@@ -53,7 +92,8 @@ function layout(nodes: GraphNode[]): Node[] {
       borderRadius: 8,
       padding: "8px 10px",
     },
-  }));
+    };
+  });
 }
 
 function toEdges(edges: GraphEdge[], showLabels: boolean): Edge[] {
@@ -89,7 +129,10 @@ function GraphWorkspace() {
   const metrics = useGraphMetrics(repositoryId);
   const { fitView } = useReactFlow();
 
-  const nodes = useMemo(() => layout(graph.data?.nodes ?? []), [graph.data]);
+  const nodes = useMemo(
+    () => layout(graph.data?.nodes ?? [], graph.data?.edges ?? []),
+    [graph.data],
+  );
   const edges = useMemo(() => toEdges(graph.data?.edges ?? [], (graph.data?.edges.length ?? 0) <= 60), [graph.data]);
 
   const chainQuery = useQuery({
